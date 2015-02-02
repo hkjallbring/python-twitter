@@ -120,7 +120,7 @@ class Status(object):
             'withheld_in_countries': None,
             'withheld_scope': None}
 
-        for (param, default) in param_defaults.iteritems():
+        for (param, default) in param_defaults.items():
             setattr(self, param, kwargs.get(param, default))
 
     def GetCreatedAt(self):
@@ -351,7 +351,7 @@ class Status(object):
           A human readable string representing the posting time
         """
         fudge = 1.25
-        delta = long(self.now) - long(self.created_at_in_seconds)
+        delta = int(self.now) - int(self.created_at_in_seconds)
 
         if delta < (1 * fudge):
             return 'about a second ago'

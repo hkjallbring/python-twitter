@@ -19,7 +19,7 @@
 TinyURL is provided as the default and as an example.
 """
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 
 # Change History
@@ -63,7 +63,7 @@ class ShortenURL(object):
         """
 
         result = None
-        f = urllib.urlopen("http://tinyurl.com/api-create.php?url=%s" % longURL)
+        f = urllib.request.urlopen("http://tinyurl.com/api-create.php?url=%s" % longURL)
         try:
             result = f.read()
         finally:

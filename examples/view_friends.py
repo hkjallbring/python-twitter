@@ -5,4 +5,4 @@ api = twitter.Api(consumer_key='consumer_key',
                   access_token_key='access_token',
                   access_token_secret='access_token_secret')
 users = api.GetFriends()
-print [u.name for u in users]
+print([u.name for u in users])

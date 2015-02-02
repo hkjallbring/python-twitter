@@ -25,19 +25,19 @@ import json #as simplejson
 import time
 import calendar
 import unittest
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 import twitter
 
 
 class StatusTest(unittest.TestCase):
-    SAMPLE_JSON = '''{"created_at": "Fri Jan 26 23:17:14 +0000 2007", "id": 4391023, "text": "A l\u00e9gp\u00e1rn\u00e1s haj\u00f3m tele van angoln\u00e1kkal.", "user": {"description": "Canvas. JC Penny. Three ninety-eight.", "id": 718443, "location": "Okinawa, Japan", "name": "Kesuke Miyagi", "profile_image_url": "https://twitter.com/system/user/profile_image/718443/normal/kesuke.png", "screen_name": "kesuke", "url": "https://twitter.com/kesuke"}}'''
+    SAMPLE_JSON = '''{"created_at": "Fri Jan 26 23:17:14 +0000 2007", "id": 4391023, "text": "A l\\u00e9gp\\u00e1rn\\u00e1s haj\\u00f3m tele van angoln\\u00e1kkal.", "user": {"description": "Canvas. JC Penny. Three ninety-eight.", "id": 718443, "location": "Okinawa, Japan", "name": "Kesuke Miyagi", "profile_image_url": "https://twitter.com/system/user/profile_image/718443/normal/kesuke.png", "screen_name": "kesuke", "url": "https://twitter.com/kesuke"}}'''
 
     def _GetSampleUser(self):
         return twitter.User(id=718443,
                             name='Kesuke Miyagi',
                             screen_name='kesuke',
-                            description=u'Canvas. JC Penny. Three ninety-eight.',
+                            description='Canvas. JC Penny. Three ninety-eight.',
                             location='Okinawa, Japan',
                             url='https://twitter.com/kesuke',
                             profile_image_url='https://twitter.com/system/user/pro'
@@ -47,14 +47,14 @@ class StatusTest(unittest.TestCase):
     def _GetSampleStatus(self):
         return twitter.Status(created_at='Fri Jan 26 23:17:14 +0000 2007',
                               id=4391023,
-                              text=u'A légpárnás hajóm tele van angolnákkal.',
+                              text='A légpárnás hajóm tele van angolnákkal.',
                               user=self._GetSampleUser())
 
     def testInit(self):
         '''Test the twitter.Status constructor'''
         status = twitter.Status(created_at='Fri Jan 26 23:17:14 +0000 2007',
                                 id=4391023,
-                                text=u'A légpárnás hajóm tele van angolnákkal.',
+                                text='A légpárnás hajóm tele van angolnákkal.',
                                 user=self._GetSampleUser())
 
     def testGettersAndSetters(self):
@@ -68,8 +68,8 @@ class StatusTest(unittest.TestCase):
         self.assertEqual(created_at, status.GetCreatedAtInSeconds())
         status.SetNow(created_at + 10)
         self.assertEqual("about 10 seconds ago", status.GetRelativeCreatedAt())
-        status.SetText(u'A légpárnás hajóm tele van angolnákkal.')
-        self.assertEqual(u'A légpárnás hajóm tele van angolnákkal.',
+        status.SetText('A légpárnás hajóm tele van angolnákkal.')
+        self.assertEqual('A légpárnás hajóm tele van angolnákkal.',
                          status.GetText())
         status.SetUser(self._GetSampleUser())
         self.assertEqual(718443, status.GetUser().id)
@@ -140,7 +140,7 @@ class StatusTest(unittest.TestCase):
         data = status.AsDict()
         self.assertEqual(4391023, data['id'])
         self.assertEqual('Fri Jan 26 23:17:14 +0000 2007', data['created_at'])
-        self.assertEqual(u'A légpárnás hajóm tele van angolnákkal.', data['text'])
+        self.assertEqual('A légpárnás hajóm tele van angolnákkal.', data['text'])
         self.assertEqual(718443, data['user']['id'])
 
     def testEq(self):
@@ -148,7 +148,7 @@ class StatusTest(unittest.TestCase):
         status = twitter.Status()
         status.created_at = 'Fri Jan 26 23:17:14 +0000 2007'
         status.id = 4391023
-        status.text = u'A légpárnás hajóm tele van angolnákkal.'
+        status.text = 'A légpárnás hajóm tele van angolnákkal.'
         status.user = self._GetSampleUser()
         self.assertEqual(status, self._GetSampleStatus())
 
@@ -172,7 +172,7 @@ class UserTest(unittest.TestCase):
         return twitter.User(id=673483,
                             name='DeWitt',
                             screen_name='dewitt',
-                            description=u'Indeterminate things',
+                            description='Indeterminate things',
                             location='San Francisco, CA',
                             url='http://unto.net/',
                             profile_image_url='https://twitter.com/system/user/prof'
@@ -185,7 +185,7 @@ class UserTest(unittest.TestCase):
         user = twitter.User(id=673483,
                             name='DeWitt',
                             screen_name='dewitt',
-                            description=u'Indeterminate things',
+                            description='Indeterminate things',
                             url='https://twitter.com/dewitt',
                             profile_image_url='https://twitter.com/system/user/prof'
                                               'ile_image/673483/normal/me.jpg',
@@ -361,7 +361,7 @@ class ApiTest(unittest.TestCase):
                           cache=None)
         api.SetUrllib(self._urllib)
         self._api = api
-        print "Testing the API class. This test is time controlled"
+        print("Testing the API class. This test is time controlled")
 
     def testTwitterError(self):
         '''Test that twitter responses containing an error message are wrapped.'''
@@ -370,7 +370,7 @@ class ApiTest(unittest.TestCase):
         # Manually try/catch so we can check the exception's value
         try:
             statuses = self._api.GetUserTimeline()
-        except twitter.TwitterError, error:
+        except twitter.TwitterError as error:
             # If the error message matches, the test passes
             self.assertEqual('test error', error.message)
         else:
@@ -379,7 +379,7 @@ class ApiTest(unittest.TestCase):
     def testGetUserTimeline(self):
         '''Test the twitter.Api GetUserTimeline method'''
         time.sleep(8)
-        print 'Testing GetUserTimeline'
+        print('Testing GetUserTimeline')
         self._AddHandler('https://api.twitter.com/1.1/statuses/user_timeline.json?count=1&screen_name=kesuke',
                          curry(self._OpenTestData, 'user_timeline-kesuke.json'))
         statuses = self._api.GetUserTimeline(screen_name='kesuke', count=1)
@@ -399,7 +399,7 @@ class ApiTest(unittest.TestCase):
     def testGetStatus(self):
         '''Test the twitter.Api GetStatus method'''
         time.sleep(8)
-        print 'Testing GetStatus'
+        print('Testing GetStatus')
         self._AddHandler('https://api.twitter.com/1.1/statuses/show.json?include_my_retweet=1&id=89512102',
                          curry(self._OpenTestData, 'show-89512102.json'))
         status = self._api.GetStatus(89512102)
@@ -409,7 +409,7 @@ class ApiTest(unittest.TestCase):
     def testDestroyStatus(self):
         '''Test the twitter.Api DestroyStatus method'''
         time.sleep(8)
-        print 'Testing DestroyStatus'
+        print('Testing DestroyStatus')
         self._AddHandler('https://api.twitter.com/1.1/statuses/destroy/103208352.json',
                          curry(self._OpenTestData, 'status-destroy.json'))
         status = self._api.DestroyStatus(103208352)
@@ -418,17 +418,17 @@ class ApiTest(unittest.TestCase):
     def testPostUpdate(self):
         '''Test the twitter.Api PostUpdate method'''
         time.sleep(8)
-        print 'Testing PostUpdate'
+        print('Testing PostUpdate')
         self._AddHandler('https://api.twitter.com/1.1/statuses/update.json',
                          curry(self._OpenTestData, 'update.json'))
-        status = self._api.PostUpdate(u'Моё судно на воздушной подушке полно угрей'.encode('utf8'))
+        status = self._api.PostUpdate('Моё судно на воздушной подушке полно угрей'.encode('utf8'))
         # This is rather arbitrary, but spot checking is better than nothing
-        self.assertEqual(u'Моё судно на воздушной подушке полно угрей', status.text)
+        self.assertEqual('Моё судно на воздушной подушке полно угрей', status.text)
 
     def testPostRetweet(self):
         '''Test the twitter.Api PostRetweet method'''
         time.sleep(8)
-        print 'Testing PostRetweet'
+        print('Testing PostRetweet')
         self._AddHandler('https://api.twitter.com/1.1/statuses/retweet/89512102.json',
                          curry(self._OpenTestData, 'retweet.json'))
         status = self._api.PostRetweet(89512102)
@@ -437,21 +437,21 @@ class ApiTest(unittest.TestCase):
     def testPostUpdateLatLon(self):
         '''Test the twitter.Api PostUpdate method, when used in conjunction with latitude and longitude'''
         time.sleep(8)
-        print 'Testing PostUpdateLatLon'
+        print('Testing PostUpdateLatLon')
         self._AddHandler('https://api.twitter.com/1.1/statuses/update.json',
                          curry(self._OpenTestData, 'update_latlong.json'))
         #test another update with geo parameters, again test somewhat arbitrary
-        status = self._api.PostUpdate(u'Моё судно на воздушной подушке полно угрей'.encode('utf8'), latitude=54.2,
+        status = self._api.PostUpdate('Моё судно на воздушной подушке полно угрей'.encode('utf8'), latitude=54.2,
                                       longitude=-2)
-        self.assertEqual(u'Моё судно на воздушной подушке полно угрей', status.text)
-        self.assertEqual(u'Point', status.GetGeo()['type'])
+        self.assertEqual('Моё судно на воздушной подушке полно угрей', status.text)
+        self.assertEqual('Point', status.GetGeo()['type'])
         self.assertEqual(26.2, status.GetGeo()['coordinates'][0])
         self.assertEqual(127.5, status.GetGeo()['coordinates'][1])
 
     def testGetReplies(self):
         '''Test the twitter.Api GetReplies method'''
         time.sleep(8)
-        print 'Testing GetReplies'
+        print('Testing GetReplies')
         self._AddHandler('https://api.twitter.com/1.1/statuses/user_timeline.json',
                          curry(self._OpenTestData, 'replies.json'))
         statuses = self._api.GetReplies()
@@ -460,7 +460,7 @@ class ApiTest(unittest.TestCase):
     def testGetRetweetsOfMe(self):
         '''Test the twitter.API GetRetweetsOfMe method'''
         time.sleep(8)
-        print 'Testing GetRetweetsOfMe'
+        print('Testing GetRetweetsOfMe')
         self._AddHandler('https://api.twitter.com/1.1/statuses/retweets_of_me.json',
                          curry(self._OpenTestData, 'retweets_of_me.json'))
         retweets = self._api.GetRetweetsOfMe()
@@ -469,7 +469,7 @@ class ApiTest(unittest.TestCase):
     def testGetFriends(self):
         '''Test the twitter.Api GetFriends method'''
         time.sleep(8)
-        print 'Testing GetFriends'
+        print('Testing GetFriends')
         self._AddHandler('https://api.twitter.com/1.1/friends/list.json?cursor=123',
                          curry(self._OpenTestData, 'friends.json'))
         users = self._api.GetFriends(cursor=123)
@@ -479,7 +479,7 @@ class ApiTest(unittest.TestCase):
     def testGetFollowers(self):
         '''Test the twitter.Api GetFollowers method'''
         time.sleep(8)
-        print 'Testing GetFollowers'
+        print('Testing GetFollowers')
         self._AddHandler('https://api.twitter.com/1.1/followers/list.json?cursor=-1',
                          curry(self._OpenTestData, 'followers.json'))
         users = self._api.GetFollowers()
@@ -499,26 +499,26 @@ class ApiTest(unittest.TestCase):
     def testGetDirectMessages(self):
         '''Test the twitter.Api GetDirectMessages method'''
         time.sleep(8)
-        print 'Testing GetDirectMessages'
+        print('Testing GetDirectMessages')
         self._AddHandler('https://api.twitter.com/1.1/direct_messages.json',
                          curry(self._OpenTestData, 'direct_messages.json'))
         statuses = self._api.GetDirectMessages()
-        self.assertEqual(u'A légpárnás hajóm tele van angolnákkal.', statuses[0].text)
+        self.assertEqual('A légpárnás hajóm tele van angolnákkal.', statuses[0].text)
 
     def testPostDirectMessage(self):
         '''Test the twitter.Api PostDirectMessage method'''
         time.sleep(8)
-        print 'Testing PostDirectMessage'
+        print('Testing PostDirectMessage')
         self._AddHandler('https://api.twitter.com/1.1/direct_messages/new.json',
                          curry(self._OpenTestData, 'direct_messages-new.json'))
-        status = self._api.PostDirectMessage('test', u'Моё судно на воздушной подушке полно угрей'.encode('utf8'))
+        status = self._api.PostDirectMessage('test', 'Моё судно на воздушной подушке полно угрей'.encode('utf8'))
         # This is rather arbitrary, but spot checking is better than nothing
-        self.assertEqual(u'Моё судно на воздушной подушке полно угрей', status.text)
+        self.assertEqual('Моё судно на воздушной подушке полно угрей', status.text)
 
     def testDestroyDirectMessage(self):
         '''Test the twitter.Api DestroyDirectMessage method'''
         time.sleep(8)
-        print 'Testing DestroyDirectMessage'
+        print('Testing DestroyDirectMessage')
         self._AddHandler('https://api.twitter.com/1.1/direct_messages/destroy.json',
                          curry(self._OpenTestData, 'direct_message-destroy.json'))
         status = self._api.DestroyDirectMessage(3496342)
@@ -528,7 +528,7 @@ class ApiTest(unittest.TestCase):
     def testCreateFriendship(self):
         '''Test the twitter.Api CreateFriendship method'''
         time.sleep(8)
-        print 'Testing CreateFriendship'
+        print('Testing CreateFriendship')
         self._AddHandler('https://api.twitter.com/1.1/friendships/create.json',
                          curry(self._OpenTestData, 'friendship-create.json'))
         user = self._api.CreateFriendship('dewitt')
@@ -538,7 +538,7 @@ class ApiTest(unittest.TestCase):
     def testDestroyFriendship(self):
         '''Test the twitter.Api DestroyFriendship method'''
         time.sleep(8)
-        print 'Testing Destroy Friendship'
+        print('Testing Destroy Friendship')
         self._AddHandler('https://api.twitter.com/1.1/friendships/destroy.json',
                          curry(self._OpenTestData, 'friendship-destroy.json'))
         user = self._api.DestroyFriendship('dewitt')
@@ -548,7 +548,7 @@ class ApiTest(unittest.TestCase):
     def testGetUser(self):
         '''Test the twitter.Api GetUser method'''
         time.sleep(8)
-        print 'Testing GetUser'
+        print('Testing GetUser')
         self._AddHandler('https://api.twitter.com/1.1/users/show.json?user_id=dewitt',
                          curry(self._OpenTestData, 'show-dewitt.json'))
         user = self._api.GetUser('dewitt')
@@ -624,8 +624,8 @@ class MockOpener(object):
             self._opened = True
             return self._handlers[url]()
         else:
-            print url
-            print self._handlers
+            print(url)
+            print(self._handlers)
 
             raise Exception('Unexpected URL %s (Checked: %s)' % (url, self._handlers))
 
@@ -642,21 +642,21 @@ class ParseTest(unittest.TestCase):
     """ Test the ParseTweet class """
 
     def testParseTweets(self):
-        handles4 = u"""Do not use this word! Hurting me! @raja7727: @qadirbasha @manion @Jayks3 உடன்பிறப்பு”""";
+        handles4 = """Do not use this word! Hurting me! @raja7727: @qadirbasha @manion @Jayks3 உடன்பிறப்பு”""";
 
         data = twitter.ParseTweet("@twitter", handles4)
         self.assertEqual([data.RT, data.MT, len(data.UserHandles)], [False, False, 4])
 
-        hashtag_n_URL = u"மனதிற்கு மிகவும் நெருக்கமான பாடல்! உயிரையே கொடுக்கலாம் சார்! #KeladiKanmani https://www.youtube.com/watch?v=FHTiG_g2fM4 … #HBdayRajaSir";
+        hashtag_n_URL = "மனதிற்கு மிகவும் நெருக்கமான பாடல்! உயிரையே கொடுக்கலாம் சார்! #KeladiKanmani https://www.youtube.com/watch?v=FHTiG_g2fM4 … #HBdayRajaSir";
 
         data = twitter.ParseTweet("@twitter", hashtag_n_URL)
         self.assertEqual([len(data.Hashtags), len(data.URLs)], [2, 1])
 
-        url_only = u"""The #Rainbow #Nebula, 544,667 #lightyears away. pic.twitter.com/2A4wSUK25A""";
+        url_only = """The #Rainbow #Nebula, 544,667 #lightyears away. pic.twitter.com/2A4wSUK25A""";
         data = twitter.ParseTweet("@twitter", url_only)
         self.assertEqual([data.MT, len(data.Hashtags), len(data.URLs)], [False, 3, 1])
 
-        url_handle = u"""RT ‏@BarackObama POTUS recommends Python-Twitter #unrelated picture pic.twitter.com/w8lFIfuUmI""";
+        url_handle = """RT ‏@BarackObama POTUS recommends Python-Twitter #unrelated picture pic.twitter.com/w8lFIfuUmI""";
         data = twitter.ParseTweet("@twitter", url_handle)
         self.assertEqual([data.RT, len(data.Hashtags), len(data.URLs), len(data.UserHandles)], [True, 1, 1, 1])
 

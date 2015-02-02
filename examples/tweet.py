@@ -4,7 +4,7 @@
 
 __author__ = 'dewitt@google.com'
 
-import ConfigParser
+import configparser
 import getopt
 import os
 import sys
@@ -48,7 +48,7 @@ USAGE = '''Usage: tweet [options] message
 
 
 def PrintUsageAndExit():
-    print USAGE
+    print(USAGE)
     sys.exit(2)
 
 
@@ -92,7 +92,7 @@ class TweetRc(object):
 
     def _GetConfig(self):
         if not self._config:
-            self._config = ConfigParser.ConfigParser()
+            self._config = configparser.ConfigParser()
             self._config.read(os.path.expanduser('~/.tweetrc'))
         return self._config
 
@@ -139,10 +139,10 @@ def main():
     try:
         status = api.PostUpdate(message)
     except UnicodeDecodeError:
-        print "Your message could not be encoded.  Perhaps it contains non-ASCII characters? "
-        print "Try explicitly specifying the encoding with the --encoding flag"
+        print("Your message could not be encoded.  Perhaps it contains non-ASCII characters? ")
+        print("Try explicitly specifying the encoding with the --encoding flag")
         sys.exit(2)
-    print "%s just posted: %s" % (status.user.name, status.text)
+    print("%s just posted: %s" % (status.user.name, status.text))
 
 
 if __name__ == "__main__":

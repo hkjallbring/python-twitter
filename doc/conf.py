@@ -40,8 +40,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'python-twitter'
-copyright = u'2013, python-twitter@googlegroups.com'
+project = 'python-twitter'
+copyright = '2013, python-twitter@googlegroups.com'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -186,8 +186,8 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-    ('index', 'python-twitter.tex', u'python-twitter Documentation',
-     u'python-twitter@googlegroups.com', 'manual'),
+    ('index', 'python-twitter.tex', 'python-twitter Documentation',
+     'python-twitter@googlegroups.com', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -216,8 +216,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'python-twitter', u'python-twitter Documentation',
-     [u'python-twitter@googlegroups.com'], 1)
+    ('index', 'python-twitter', 'python-twitter Documentation',
+     ['python-twitter@googlegroups.com'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -230,8 +230,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    ('index', 'python-twitter', u'python-twitter Documentation',
-     u'python-twitter@googlegroups.com', 'python-twitter', 'One line description of project.',
+    ('index', 'python-twitter', 'python-twitter Documentation',
+     'python-twitter@googlegroups.com', 'python-twitter', 'One line description of project.',
      'Miscellaneous'),
 ]
 
