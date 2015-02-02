@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from calendar import timegm
-import rfc822
+from email import parser
 import time
 
 from twitter import json, Hashtag, TwitterError, Url
@@ -149,7 +149,7 @@ class Status(object):
         Returns:
           The time this status message was posted, in seconds since the epoch.
         """
-        return timegm(rfc822.parsedate(self.created_at))
+        return timegm(parser.parsedate(self.created_at))
 
     created_at_in_seconds = property(GetCreatedAtInSeconds,
                                      doc="The time this status message was "
